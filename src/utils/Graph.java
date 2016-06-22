@@ -1,4 +1,5 @@
 package utils;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,6 +24,10 @@ public class Graph {
 
 	public int getTdiagnosable() {
 		return Tdiagnosable;
+	}
+
+	public int size() {
+		return nodes.size();
 	}
 
 }
