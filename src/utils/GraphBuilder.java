@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class GraphBuilder {
 
@@ -18,7 +20,7 @@ public class GraphBuilder {
 	public class GraphBuilderContainer {
 
 		public Graph dahburaMassonAlgorithm() {
-			Graph Lgraph = this.calculateLgraph().getGraph();
+			final Graph Lgraph = calculateLgraph().getGraph();
 			new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().labelGraph(Lgraph);
 			return graph;
 		}
@@ -31,10 +33,11 @@ public class GraphBuilder {
 			for (int i = 0; i < faultyNumber; i++) {
 				final int faulty = unusedRandomNumbers.remove((int) (Math.random() * unusedRandomNumbers.size()));
 
-				if (i + 1 == faultyNumber)
+				if ((i + 1) == faultyNumber) {
 					System.out.println(faulty);
-				else
+				} else {
 					System.out.print(faulty + " ");
+				}
 				graph.getNodes().forEach((nodeName, node) -> {
 					if (nodeName.equals(faulty)) {
 						node.getNeighboringNodes().keySet().forEach(neighbor -> {
@@ -53,35 +56,36 @@ public class GraphBuilder {
 
 			int v, u, ostatni;
 
-			Deque<Integer> kolejka = new LinkedList<Integer>();
-			List<Integer> skojarzony_z = new ArrayList<Integer>(Collections.nCopies(graph.size(), NIES));
+			final Deque<Integer> kolejka = new LinkedList<Integer>();
+			final List<Integer> skojarzony_z = new ArrayList<Integer>(Collections.nCopies(graph.size(), NIES));
 			final Graph Mgraph = new GraphBuilder().copyGraphNodes(graph).getGraph();
 
 			for (int i = 0; i < graph.size(); ++i) {
-				// Jeœli wierzcho³ek jest ju¿ skojarzony pomijamy go
+				// Jeï¿½li wierzchoï¿½ek jest juï¿½ skojarzony pomijamy go
 				if (skojarzony_z.get(i) != NIES) {
 					continue;
 				}
-				List<Integer> poziom = new ArrayList<Integer>(Collections.nCopies(graph.size(), 0));
-				List<Integer> ojciec = new ArrayList<Integer>(Collections.nCopies(graph.size(), NIES));
+				final List<Integer> poziom = new ArrayList<Integer>(Collections.nCopies(graph.size(), 0));
+				final List<Integer> ojciec = new ArrayList<Integer>(Collections.nCopies(graph.size(), NIES));
 				poziom.set(i, 1);
 				kolejka.clear();
 				kolejka.addLast(i);
 
-				// Ostatni to wierzcho³ek powiêkszaj¹cy skojarzenie
+				// Ostatni to wierzchoï¿½ek powiï¿½kszajï¿½cy skojarzenie
 				ostatni = NIES;
 
-				while (!kolejka.isEmpty() && ostatni == NIES) {
+				while (!kolejka.isEmpty() && (ostatni == NIES)) {
 					v = kolejka.peekFirst();
 					kolejka.pollFirst();
 
-					if (poziom.get(v) % 2 == 1) // poziom[v] jest nieparzysty
+					if ((poziom.get(v) % 2) == 1) // poziom[v] jest nieparzysty
 					{
-						for (Integer j : graph.getNodes().get(v).getNeighboringNodes().keySet()) {
+						for (final Integer j : graph.getNodes().get(v).getNeighboringNodes().keySet()) {
 							u = j;
-							// Jeœli wierzcho³ek ma poziom != zero pomijamy go
-							if (poziom.get(u) != 0)
+							// Jeï¿½li wierzchoï¿½ek ma poziom != zero pomijamy go
+							if (poziom.get(u) != 0) {
 								continue;
+							}
 							// u jest nieskojarzony
 							if (skojarzony_z.get(u) == NIES) {
 								ojciec.set(u, v);
@@ -100,7 +104,7 @@ public class GraphBuilder {
 						kolejka.addLast(skojarzony_z.get(v));
 					}
 				}
-				// Jeœli znaleziono œcie¿kê powiêkszaj¹c¹, to j¹ ustawiamy
+				// Jeï¿½li znaleziono ï¿½cieï¿½kï¿½ powiï¿½kszajï¿½cï¿½, to jï¿½ ustawiamy
 				if (ostatni != NIES) {
 					for (int j = ostatni; j != NIES; j = ojciec.get(ojciec.get(j))) {
 						skojarzony_z.set(j, ojciec.get(j));
@@ -112,7 +116,7 @@ public class GraphBuilder {
 
 			for (int j = 0; j < skojarzony_z.size(); j++) {
 				if (skojarzony_z.get(j) < NIES) {
-					Node node = Mgraph.getNodes().get(j);
+					final Node node = Mgraph.getNodes().get(j);
 					node.getNeighboringNodes().put(skojarzony_z.get(j), 1);
 				}
 			}
@@ -120,11 +124,23 @@ public class GraphBuilder {
 			return this;
 		}
 
-		public GraphBuilderContainer labelGraph(Graph Lgraph) {
-			List<Pair<Integer, Integer>> pairs = convertMgraph(graph);
-			System.out.println(pairs);
-			pairs.forEach(pair -> {
-			});
+		public GraphBuilderContainer labelGraph(final Graph Lgraph) {
+			final List<List<Integer>> combinations = convertMgraph(graph);
+			Pair<Integer, Integer> result = null;
+			System.out.println(combinations);
+			for (int i = 0; i < combinations.size(); i++) {
+				final List<Integer> list = combinations.get(i);
+				final Set<Integer> neighbors = new TreeSet<Integer>();
+				for (final Integer integer : list) {
+					neighbors.addAll(Lgraph.getNodes().get(integer).getNeighboringNodes().keySet());
+				}
+				if (result == null) {
+					result = new Pair<Integer, Integer>(i, neighbors.size());
+				} else if (result.getLast() < neighbors.size()) {
+					result = new Pair<Integer, Integer>(i, neighbors.size());
+				}
+			}
+			System.out.print(result != null ? combinations.get(result.getFirst()) : null);
 			return this;
 		}
 
@@ -149,18 +165,49 @@ public class GraphBuilder {
 		}
 	}
 
-	private List<Pair<Integer, Integer>> convertMgraph(Graph graph) {
-		List<Pair<Integer, Integer>> pairs = new ArrayList<Pair<Integer, Integer>>();
-		graph.getNodes().forEach((name, node) -> {
-			node.getNeighboringNodes().forEach((neighbor, faulty) -> {
-				if (pairs.stream().filter(pair -> pair.getFirst() == name && pair.getLast() == neighbor
-						|| pair.getFirst() == neighbor && pair.getLast() == name).count() == 0) {
-					pairs.add(new Pair<Integer, Integer>(name, neighbor));
-				}
-			});
-		});
+	private List<List<Integer>> convertMgraph(final Graph graph) {
+		final List<Pair<Integer, Integer>> pairs = new ArrayList<Pair<Integer, Integer>>();
+		graph.getNodes().forEach(
+				(name, node) -> {
+					node.getNeighboringNodes().forEach(
+							(neighbor, faulty) -> {
+								if (pairs
+										.stream()
+										.filter(pair -> pair.equals(new Pair<Integer, Integer>(name, neighbor))
+												|| pair.equals(new Pair<Integer, Integer>(neighbor, name))).count() == 0) {
+									pairs.add(new Pair<Integer, Integer>(name, neighbor));
+								}
+							});
+				});
 
-		return pairs;
+		// drzewo binarne po wszystkim
+		final List<List<Integer>> combinations = new ArrayList<List<Integer>>();
+		getCombinations(pairs, combinations, 0);
+		return combinations;
+	}
+
+	private void getCombinations(final List<Pair<Integer, Integer>> pairs, final List<List<Integer>> combinations, final int level) {
+		if (level >= pairs.size()) {
+			return;
+		} else if (level < 0) {
+			return;
+		} else {
+			if (level == 0) {
+				combinations.add(new ArrayList<Integer>(Collections.nCopies(1, pairs.get(level).getFirst())));
+				combinations.add(new ArrayList<Integer>(Collections.nCopies(1, pairs.get(level).getLast())));
+				getCombinations(pairs, combinations, level + 1);
+			} else {
+				final int size = combinations.size();
+				for (int i = 0; i < size; i++) {
+					final List<Integer> list = new ArrayList<Integer>(combinations.get(i));
+					list.add(pairs.get(level).getLast());
+
+					combinations.get(i).add(pairs.get(level).getFirst());
+					combinations.add(list);
+				}
+				getCombinations(pairs, combinations, level + 1);
+			}
+		}
 
 	}
 
