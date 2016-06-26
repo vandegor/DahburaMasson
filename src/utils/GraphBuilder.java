@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,14 +26,14 @@ public class GraphBuilder {
 
 		public Graph dahburaMassonAlgorithm() {
 			final Graph Lgraph = calculateLgraph().getGraph();
-			new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().labelGraph(Lgraph);
+			new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().labelGraphCombinations(Lgraph);
 			return graph;
 		}
 
 		public GraphBuilderContainer randomFaulty(int min) {
 
-			final List<Integer> unusedRandomNumbers = new ArrayList<Integer>(Arrays.asList(0, 2));
-			//final List<Integer> unusedRandomNumbers = new ArrayList<Integer>(graph.getNodes().keySet());
+			// final List<Integer> unusedRandomNumbers = new ArrayList<Integer>(Arrays.asList(0, 2));
+			final List<Integer> unusedRandomNumbers = new ArrayList<Integer>(graph.getNodes().keySet());
 
 			int faultyNumber = (int) (Math.random() * (graph.getTdiagnosable() + 1));
 			min = min < 0 ? 0 : (min > graph.getTdiagnosable() ? graph.getTdiagnosable() : min);
@@ -62,7 +66,7 @@ public class GraphBuilder {
 
 			final Deque<Integer> kolejka = new LinkedList<Integer>();
 			final List<Integer> skojarzony_z = new ArrayList<Integer>(Collections.nCopies(graph.size(), NIES));
-			final Graph Mgraph = new GraphBuilder().copyGraphNodes(graph).getGraph();
+			final Graph Mgraph = new GraphBuilder().copyGraph0(graph).getGraph();
 
 			for (int i = 0; i < graph.size(); ++i) {
 				// Je�li wierzcho�ek jest ju� skojarzony pomijamy go
@@ -130,10 +134,64 @@ public class GraphBuilder {
 			return this;
 		}
 
-		public GraphBuilderContainer labelGraph(final Graph Lgraph) {
+		public GraphBuilderContainer labelGraph() {
+			int i = 0, labeled = 0;
+			Set<Integer> faultySuspects = new TreeSet<Integer>();
+			ArrayList<Node> faultyFreeNodes = new ArrayList<Node>();
+			for (Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
+				boolean isFaultyFree = true;
+				for (Entry<Integer, Integer> neighbor : entry.getValue().getNeighboringNodes().entrySet()) {
+					if (neighbor.getValue().intValue() == 1) {
+						faultySuspects.add(neighbor.getKey());
+						isFaultyFree = false;
+						break;
+					}
+				}
+				if (isFaultyFree) {
+					faultyFreeNodes.add(entry.getValue());
+				}
+			}
+			Node node = faultyFreeNodes.get(i);
+			node.setLabel("ff");
+			while (i < faultyFreeNodes.size() && labeled <= faultySuspects.size() / 2) {
+				if ("ff".equals(node.getLabel())) {
+					Node suspect = null;
+					for (Integer faultySuspect : faultySuspects) {
+						if (node.getNeighboringNodes().containsKey(faultySuspect.intValue())) {
+							suspect = graph.getNodes().get(faultySuspect);
+							if (suspect.getLabel() == null || suspect.getLabel() == "") {
+								node = graph.getNodes().get(faultySuspect);
+								node.setLabel("f");
+								labeled++;
+								break;
+							} else {
+								suspect = null;
+								continue;
+							}
+						}
+					}
+					if (suspect == null) {
+						node = i + 1 < faultyFreeNodes.size() ? faultyFreeNodes.get(++i) : faultyFreeNodes.get(i++);
+						node.setLabel("ff");
+					}
+				} else {
+					for (Entry<Integer, Integer> neighbor : node.getNeighboringNodes().entrySet()) {
+						if (neighbor.getValue().intValue() == 1) {
+							node = graph.getNodes().get(neighbor.getKey());
+							node.setLabel("ff");
+							break;
+						}
+					}
+				}
+			}
+			return this;
+		}
+
+		@Deprecated
+		public GraphBuilderContainer labelGraphCombinations(final Graph Lgraph) {
 			final List<List<Integer>> combinations = convertMgraph(graph);
 			Pair<Integer, Integer> result = null;
-			//System.out.println(combinations);
+			// System.out.println(combinations);
 			for (int i = 0; i < combinations.size(); i++) {
 				final List<Integer> list = combinations.get(i);
 				final Set<Integer> neighbors = new TreeSet<Integer>();
@@ -185,24 +243,21 @@ public class GraphBuilder {
 			z.pomnoz(y);
 			z.pomnoz(xt);
 			double max = z.getMax();
-			z.getTablice();
 			double[][] matrixZ = z.getTablice();
-			
-			//System.out.println(x);
-			//System.out.println(y);
-			//System.out.println(xt);
-			//System.out.println(z);
-			
+
+			// System.out.println(x);
+			// System.out.println(y);
+			// System.out.println(xt);
+			// System.out.println(z);
+
 			for (int i = 0; i < matrixZ.length; i++) {
 				for (int j = 0; j < matrixZ.length; j++) {
 					if (matrixZ[i][j] > 0) {
 						Node node = Lgraph.getNodes().get(i);
 						node.getNeighboringNodes().put(j, 1);
-
 					}
 				}
 			}
-
 			graph = Lgraph;
 			return this;
 		}
@@ -212,28 +267,56 @@ public class GraphBuilder {
 		}
 	}
 
-	private double[][] calculateY(final Graph Lgraph) {
-		return calculateMatrix(Lgraph, false);
-	}
-
 	private double[][] calculateX(final Graph Lgraph) {
-		return calculateMatrix(Lgraph, true);
+		double[][] matrix = new double[Lgraph.size()][Lgraph.size()];
+		Map<Integer, Set<Integer>> zeroLinksMap = new HashMap<Integer, Set<Integer>>();
+		graph.getNodes().forEach((name, node) -> {
+			check0Links(node, zeroLinksMap);
+		});
+		for (int i = 0; i < matrix.length; i++) {
+			Set<Integer> zeroLinks = zeroLinksMap.get(i);
+			for (int j = 0; j < matrix[i].length; j++) {
+				if (i == j) {
+					matrix[i][j] = 1;
+				} else if (zeroLinks != null && zeroLinks.contains(j)) {
+					matrix[i][j] = 1;
+				}
+			}
+		}
+		return matrix;// calculateMatrix(Lgraph, false);
 	}
 
-	private double[][] calculateMatrix(final Graph Lgraph, boolean isY) {
+	private Set<Integer> check0Links(Node node, Map<Integer, Set<Integer>> zeroLinks) {
+		Set<Integer> zeroNeighbors = new TreeSet<Integer>();
+		for (Entry<Integer, Integer> entry : node.getNeighboringNodes().entrySet()) {
+			int neighbor = entry.getKey();
+			int value = entry.getValue();
+			if (value == 0) {
+				if (zeroLinks.containsKey(neighbor)) {
+					zeroNeighbors.add(neighbor);
+					zeroNeighbors.addAll(zeroLinks.get(neighbor));
+					zeroLinks.put(node.getName(), zeroNeighbors);
+				} else {
+					zeroNeighbors.add(neighbor);
+					zeroLinks.put(node.getName(), zeroNeighbors);
+					zeroNeighbors.addAll(check0Links(graph.getNodes().get(neighbor), zeroLinks));
+				}
+			}
+		}
+		return zeroNeighbors;
+	}
+
+	private double[][] calculateY(final Graph Lgraph) {
 		double[][] matrix = new double[Lgraph.size()][Lgraph.size()];
 		for (int i = 0; i < matrix.length; i++) {
 			Node node = Lgraph.getNodes().get(i);
 			for (int j = 0; j < matrix[i].length; j++) {
-				if (isY && i == j) {
-					matrix[i][i] = 1.0;
-				} else if (node.getNeighboringNodes().get(j) != null
-						&& Integer.compare(node.getNeighboringNodes().get(j), isY ? 0 : 1) == 0) {
+				if (node.getNeighboringNodes().get(j) != null
+						&& Integer.compare(node.getNeighboringNodes().get(j), 1) == 0) {
 
 					matrix[i][j] = 1.0;
 					matrix[j][i] = 1.0;
-				} // else if (matrix[i][j] != 1.0)
-					// matrix[i][j] = 0.0;
+				}
 			}
 		}
 		return matrix;
@@ -298,6 +381,14 @@ public class GraphBuilder {
 		return new GraphBuilderContainer();
 	}
 
+	public GraphBuilderContainer copyGraph0(final Graph graph) {
+		this.graph = new Graph(graph.getTdiagnosable());
+		graph.getNodes().forEach((name, node) -> {
+			this.graph.getNodes().put(name, complexCopyNode0(node));
+		});
+		return new GraphBuilderContainer();
+	}
+
 	public GraphBuilderContainer copyGraphNodes(final Graph graph) {
 		this.graph = new Graph(graph.getTdiagnosable());
 		graph.getNodes().forEach((name, node) -> {
@@ -318,6 +409,18 @@ public class GraphBuilder {
 		node.setName(oldNode.getName());
 		node.setLabel(oldNode.getLabel());
 		node.getNeighboringNodes().putAll(oldNode.getNeighboringNodes());
+		return node;
+	}
+
+	private Node complexCopyNode0(final Node oldNode) {
+		final Node node = new Node();
+		node.setName(oldNode.getName());
+		node.setLabel(oldNode.getLabel());
+		node.getNeighboringNodes().putAll(oldNode.getNeighboringNodes());
+
+		for (Integer neighbor : node.getNeighboringNodes().keySet()) {
+			node.getNeighboringNodes().put(neighbor, 0);
+		}
 		return node;
 	}
 

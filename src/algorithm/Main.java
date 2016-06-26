@@ -14,19 +14,17 @@ public class Main {
 	public static void main(final String[] args) {
 		try {
 			final Graph graph = new GraphBuilder().loadFromFileWithoutFaulty("testGraph.txt").getGraph();
-			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(2).getGraph();
-			final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
-			final Graph Lgraph = new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph();
-			final Graph Mgraph = new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().getGraph();
-			final Graph labeled = new GraphBuilder().copyGraph(Mgraph).labelGraph(Lgraph).getGraph();
 			// System.out.println(graph);
+			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
 			// System.out.println(syndrome);
-			 System.out.println(Lgraph);
-			 System.out.println(Lgraph2);
-			// System.out.println(Mgraph);
+			// final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
+			// System.out.println(Lgraph2);
+			final Graph Lgraph = new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph();
+			System.out.println(Lgraph);
+			final Graph Mgraph = new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().getGraph();
+			System.out.println(Mgraph);
+			final Graph labeled = new GraphBuilder().copyGraph(Mgraph).labelGraph().getGraph();
 			System.out.println(labeled);
-			// new GraphBuilder().copyGraph(syndrome).dahburaMassonAlgorithm();
-
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
