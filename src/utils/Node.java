@@ -6,7 +6,7 @@ import java.util.TreeMap;
 public class Node {
 	private int name;
 	private String label = "";
-	private Map<Integer, Integer> neighboringNodes = new TreeMap<Integer, Integer>();
+	public Map<Integer, Integer> neighboringNodes = new TreeMap<Integer, Integer>();
 
 	public Node() {
 
@@ -44,5 +44,7 @@ public class Node {
 	public int size() {
 		return neighboringNodes.size();
 	}
+	
+
 	
 }

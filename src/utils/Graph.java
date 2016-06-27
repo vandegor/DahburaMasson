@@ -5,8 +5,11 @@ import java.util.TreeMap;
 
 public class Graph {
 
+	public GUI gui = new GUI();
+	
 	private int Tdiagnosable = 0;
 	private Map<Integer, Node> nodes = new TreeMap<Integer, Node>();
+	public Node n = new Node();
 
 	public Graph(int tdiagnosable) {
 		super();
@@ -29,5 +32,6 @@ public class Graph {
 	public int size() {
 		return nodes.size();
 	}
+	
 
 }

@@ -5,14 +5,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import utils.GUI;
 import utils.Graph;
 import utils.GraphBuilder;
+import utils.GraphPrint;
 import utils.Node;
 
 public class Main {
 
 	public static void main(final String[] args) {
 		try {
+
 			final Graph graph = new GraphBuilder().loadFromFileWithoutFaulty("testGraph.txt").getGraph();
 			// System.out.println(graph);
 			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
@@ -25,6 +28,20 @@ public class Main {
 			System.out.println(Mgraph);
 			final Graph labeled = new GraphBuilder().copyGraph(Mgraph).labelGraph().getGraph();
 			System.out.println(labeled);
+			final GraphPrint gr = new GraphPrint();
+
+			// new GraphBuilder().copyGraph(syndrome).dahburaMassonAlgorithm();
+			// graph.getAlgo();
+			for (int i = 0; i < Lgraph.size(); i++) {
+				System.out.println("--------------------");
+				gr.DodajGraf(null);
+				for (Entry<Integer, Integer> entry : Lgraph.getNodes().get(i).getNeighboringNodes().entrySet()) {
+					System.out.println(entry.getKey());
+					gr.Dodaj_Krawedz(i, entry.getKey());
+					
+				}
+			}
+
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
