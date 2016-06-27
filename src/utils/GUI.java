@@ -18,6 +18,12 @@ public class GUI extends JFrame {
 	private static final long serialVersionUID = 6189586734453132613L;
 	private JButton add;
 	private JButton algo;
+	private JButton delete;
+	private JButton load;
+	private JButton Lgraph;
+	private JButton Mstar;
+	private JButton label;
+	private Object cell;
 	private mxGraphComponent graphComponent;
 	private mxGraph graph = new mxGraph();
 	private Map<Integer, mxCell> mxCellMap = new TreeMap<Integer, mxCell>();
@@ -34,8 +40,14 @@ public class GUI extends JFrame {
 
 	public void init_GUI() {
 		InitWindow();
-		add();
-		Algorithm();
+		load();
+		Lgraph();
+		Mstar();
+		label();
+		delete();
+		
+		mouse();
+		
 	}
 
 	public void InitWindow() {
@@ -91,6 +103,73 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose Tools |
 																				// Templates.
+			}
+		});
+	}
+	
+	public void delete() {
+		delete = new JButton("Usuñ");
+		getContentPane().add(delete);
+		delete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graph.getModel().remove(cell);
+			}
+		});
+	}
+	
+	public void load() {
+		load = new JButton("Za³aduj");
+		getContentPane().add(load);
+		load.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// gr.DodajGraf(text);
+
+			}
+		});
+	}
+	public void mouse(){
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+				public void mouseReleased(MouseEvent e){
+					cell = graphComponent.getCellAt(e.getX(), e.getY());
+				}
+		});
+	}
+	
+	public void label() {
+		label = new JButton("laj");
+		getContentPane().add(load);
+		label.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// gr.DodajGraf(text);
+
+			}
+		});
+	}
+	
+	
+	public void Lgraph() {
+		Lgraph = new JButton("L-Graph");
+		getContentPane().add(Lgraph);
+		Lgraph.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// gr.DodajGraf(text);
+
+			}
+		});
+	}
+	
+	public void Mstar() {
+		Mstar = new JButton("M*");
+		getContentPane().add(Mstar);
+		Mstar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// gr.DodajGraf(text);
+
 			}
 		});
 	}
