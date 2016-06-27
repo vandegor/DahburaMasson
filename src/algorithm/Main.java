@@ -14,27 +14,17 @@ import utils.Node;
 public class Main {
 
 	public static void main(final String[] args) {
-		try {
-			final GUI gui = new GUI();
-			gui.setVisible(true);
-			final Graph graph = new GraphBuilder().loadFromFileWithoutFaulty("testGraph.txt").getGraph();
-			// System.out.println(graph);
-			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
-			// System.out.println(syndrome);
-			final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
-			// System.out.println(Lgraph2);
-			final Graph Lgraph = new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph();
-			System.out.println(Lgraph);
-			final Graph Mgraph = new GraphBuilder().copyGraph(Lgraph).findMaximumMatching().getGraph();
-			System.out.println(Mgraph);
-			final Graph labeled = new GraphBuilder().copyGraph(Mgraph).labelGraph().getGraph();
-			System.out.println(labeled);
-
-			gui.buildMxGraph(labeled);
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		final GUI gui = new GUI();
+		gui.setVisible(true);
+		/*
+		 * try { final Graph graph = new GraphBuilder().loadFromFileWithoutFaulty("testGraph.txt").getGraph(); System.out.println(graph);
+		 * final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph(); System.out.println(syndrome); final Graph
+		 * Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph(); System.out.println(Lgraph2); final Graph Lgraph =
+		 * new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph(); System.out.println(Lgraph); final Graph Mgraph = new
+		 * GraphBuilder().copyGraph(Lgraph).findMaximumMatching().getGraph(); System.out.println(Mgraph); final Graph labeled = new
+		 * GraphBuilder().copyGraph(Mgraph).labelGraph().getGraph(); System.out.println(labeled); gui.buildMxGraph(graph);
+		 * gui.buildMxGraph(Mgraph); gui.buildMxGraph(labeled); } catch (final IOException e) { e.printStackTrace(); }
+		 */
 
 	}
 
