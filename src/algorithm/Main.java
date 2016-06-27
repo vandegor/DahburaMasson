@@ -20,7 +20,7 @@ public class Main {
 			// System.out.println(graph);
 			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
 			// System.out.println(syndrome);
-			// final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
+			 final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
 			// System.out.println(Lgraph2);
 			final Graph Lgraph = new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph();
 			System.out.println(Lgraph);
