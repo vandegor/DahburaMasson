@@ -5,7 +5,7 @@ import javax.swing.JOptionPane;
 import com.mxgraph.swing.*;
 import com.mxgraph.view.*;
 
-public class GraphPrint {
+public class GraphPrint { 
 	
     protected static mxGraph graph = new mxGraph();
     private mxGraphComponent graphComponent;
@@ -16,11 +16,11 @@ public class GraphPrint {
 	}
 
 	
-	public void DodajGraf(String text){
+	public void DodajGraf(){
 	        int i = 0;
 	        this.getGraph().getModel().beginUpdate();
 	        Object parent = this.getGraph().getDefaultParent();
-	        Object v1 = this.getGraph().insertVertex(parent, null, text, 30, 30, 40, 40);
+	        Object v1 = this.getGraph().insertVertex(parent, null, "", 30, 30, 40, 40);
 	        this.getGraph().getModel().endUpdate();
 	        System.out.println("dodano");
 	    }

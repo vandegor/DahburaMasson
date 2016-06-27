@@ -21,7 +21,7 @@ public class Main {
 			// System.out.println(graph);
 			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
 			// System.out.println(syndrome);
-			 final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
+			final Graph Lgraph2 = new GraphBuilder().copyGraph(syndrome).calculateLgraph().getGraph();
 			// System.out.println(Lgraph2);
 			final Graph Lgraph = new GraphBuilder().copyGraph(syndrome).calculateLgraphMatrix().getGraph();
 			System.out.println(Lgraph);
@@ -29,24 +29,8 @@ public class Main {
 			System.out.println(Mgraph);
 			final Graph labeled = new GraphBuilder().copyGraph(Mgraph).labelGraph().getGraph();
 			System.out.println(labeled);
-			final GraphPrint gr = new GraphPrint();
 
-			// new GraphBuilder().copyGraph(syndrome).dahburaMassonAlgorithm();
-			// graph.getAlgo();
-			for (int i = 0; i < Lgraph.size(); i++) {
-				System.out.println("--------------------");
-				gr.DodajGraf(null);
-			}
-			for (int i = 0; i < Lgraph.size(); i++) {
-				System.out.println("--------------------");
-			//	gr.DodajGraf(null);
-				for (Entry<Integer, Integer> entry : Lgraph.getNodes().get(i).getNeighboringNodes().entrySet()) {
-					System.out.println(entry.getKey());
-					int j=entry.getKey();
-					gr.Dodaj_Krawedz(i, j);
-					
-				}
-			}
+			gui.buildMxGraph(labeled);
 
 		} catch (final IOException e) {
 			e.printStackTrace();
