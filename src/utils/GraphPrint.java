@@ -2,7 +2,7 @@ package utils;
 
 import javax.swing.JOptionPane;
 
-import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.*;
 import com.mxgraph.view.*;
 
 public class GraphPrint {
@@ -22,15 +22,18 @@ public class GraphPrint {
 	        Object parent = this.getGraph().getDefaultParent();
 	        Object v1 = this.getGraph().insertVertex(parent, null, text, 30, 30, 40, 40);
 	        this.getGraph().getModel().endUpdate();
+	        System.out.println("dodano");
 	    }
 	  
 	    public void Dodaj_Krawedz(int v, int w){
 	        Object parent = this.getGraph().getDefaultParent();
-	      //  Object v1 = this.getM().get(v);
-	      //  Object v2 = this.getM().get(w);
 	        Object v1 = v;
 	        Object v2 = w;
-	        Object v3 = this.getGraph().insertEdge(parent, null, null, v1, v2);
+	        
+	        System.out.println(v1);
+	        Object v3 = this.getGraph().insertEdge(parent, null, "txt", v1, v2);
+	        
+	        System.out.println("dodano22");
 	    }
 	
 

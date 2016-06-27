@@ -15,7 +15,8 @@ public class Main {
 
 	public static void main(final String[] args) {
 		try {
-
+			final GUI gui = new GUI();
+			gui.setVisible(true);
 			final Graph graph = new GraphBuilder().loadFromFileWithoutFaulty("testGraph.txt").getGraph();
 			// System.out.println(graph);
 			final Graph syndrome = new GraphBuilder().copyGraph(graph).randomFaulty(1).getGraph();
@@ -35,9 +36,14 @@ public class Main {
 			for (int i = 0; i < Lgraph.size(); i++) {
 				System.out.println("--------------------");
 				gr.DodajGraf(null);
+			}
+			for (int i = 0; i < Lgraph.size(); i++) {
+				System.out.println("--------------------");
+			//	gr.DodajGraf(null);
 				for (Entry<Integer, Integer> entry : Lgraph.getNodes().get(i).getNeighboringNodes().entrySet()) {
 					System.out.println(entry.getKey());
-					gr.Dodaj_Krawedz(i, entry.getKey());
+					int j=entry.getKey();
+					gr.Dodaj_Krawedz(i, j);
 					
 				}
 			}
