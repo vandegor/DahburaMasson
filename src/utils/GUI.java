@@ -112,7 +112,7 @@ public class GUI extends JFrame {
 						System.out.println((fileChooser.getSelectedFile()));
 						graphBuilder = new GraphBuilder()
 								.loadFromFileWithoutFaulty((fileChooser.getSelectedFile().getAbsolutePath()))
-								.randomFaulty(0);
+								.randomFaulty(3);
 						buildMxGraph();
 					}
 				} catch (IOException e1) {
